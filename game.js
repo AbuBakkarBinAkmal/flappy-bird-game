@@ -51,27 +51,31 @@ document.addEventListener('DOMContentLoaded', () => {
     generateInitialBgBirds();
 
     // Handle user input
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') {
-            if (!gameStarted) {
-                startGame();
-            } else if (!gameOver) {
-                birdJump();
-            } else {
-                resetGame();
-            }
-        }
-    });
+    document.addEventListener('keydown', handleInput);
+    gameArea.addEventListener('click', handleInput);
+    gameArea.addEventListener('touchstart', handleInput, { passive: false }); // Add touch listener
 
-    gameArea.addEventListener('click', () => {
+    function handleInput(event) {
+        // Prevent default touch behavior like scrolling or zooming
+        if (event.type === 'touchstart') {
+            event.preventDefault();
+        }
+        
+        // Check game state and perform action
         if (!gameStarted) {
             startGame();
         } else if (!gameOver) {
             birdJump();
         } else {
-            resetGame();
+            // Only allow reset if the event is specifically a keydown (Space) or click/touch
+            // This prevents accidental resets from other key presses while game over screen is up
+            if (event.type === 'keydown' && event.code === 'Space') {
+                 resetGame();
+            } else if (event.type === 'click' || event.type === 'touchstart'){
+                 resetGame();
+            }
         }
-    });
+    }
 
     function startGame() {
         gameStarted = true;
@@ -476,16 +480,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Hide the default game message
         gameMessage.style.display = 'none';
         
-        // Add event listener to retry button
+        // Add event listener to retry button (already handles click/touch via handleInput)
         const retryButton = document.getElementById('retry-button');
-        retryButton.addEventListener('click', resetGame);
+        // retryButton.addEventListener('click', resetGame); // No longer needed, handled by gameArea listener
         
-        // Keep the space key functionality
+        // Keep the space key functionality for retry screen
+        // document.removeEventListener('keydown', handleInput); // Keep handleInput active
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space' && gameOver) {
-                resetGame();
+                // Check if retry screen exists before resetting
+                 const retryScreen = document.getElementById('retry-screen');
+                 if(retryScreen){
+                    resetGame();
+                 } 
             }
-        }, { once: true });
+        }, { once: true }); 
     }
 
     function resetGame() {
