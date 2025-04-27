@@ -1,0 +1,420 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.game-container {
+    position: relative;
+    width: 360px;
+    height: 640px;
+    border: 2px solid #333;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.game-area {
+    width: 100%;
+    height: 100%;
+    background-color: #70c5ce;
+    position: relative;
+    overflow: hidden;
+}
+
+.game-message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    font-size: 24px;
+    text-align: center;
+}
+
+.score-container {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 5;
+}
+
+.score {
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.high-score {
+    font-size: 18px;
+    color: white;
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* Timer styling */
+.timer {
+    font-size: 16px;
+    color: white;
+    text-shadow: 1px 1px 0 #000;
+    margin-top: 5px;
+}
+
+.bird {
+    position: absolute;
+    width: 60px;
+    height: 45px;
+    top: 50%;
+    left: 60px;
+    transform: translateY(-50%);
+    z-index: 2;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.bird-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.bird::before,
+.bird::after,
+.bird-beak,
+.bird-wing {
+    display: none;
+}
+
+.pipe {
+    position: absolute;
+    width: 60px;
+    z-index: 1;
+    border: 2px solid #000;
+    background: linear-gradient(90deg, #5a9122 0%, #73bf2e 20%, #8eda44 50%, #73bf2e 80%, #5a9122 100%);
+    box-shadow: inset 2px 0 2px rgba(255, 255, 255, 0.3), 
+                inset -2px 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.pipe-top {
+    top: 0;
+    border-bottom: none;
+    border-radius: 2px 2px 0 0;
+}
+
+.pipe-top::after {
+    content: '';
+    position: absolute;
+    width: 70px;
+    height: 15px;
+    background: linear-gradient(to bottom, #5a9122, #73bf2e);
+    border: 2px solid #000;
+    border-radius: 5px 5px 0 0;
+    bottom: -2px;
+    left: -7px;
+    box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.5);
+}
+
+.pipe-bottom {
+    bottom: 0;
+    border-top: none;
+    border-radius: 0 0 2px 2px;
+}
+
+.pipe-bottom::after {
+    content: '';
+    position: absolute;
+    width: 70px;
+    height: 15px;
+    background: linear-gradient(to top, #5a9122, #73bf2e);
+    border: 2px solid #000;
+    border-radius: 0 0 5px 5px;
+    top: -2px;
+    left: -7px;
+    box-shadow: inset 0 -2px 2px rgba(255, 255, 255, 0.5);
+}
+
+.pipe::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 15px,
+        rgba(0, 0, 0, 0.1) 15px,
+        rgba(0, 0, 0, 0.1) 20px
+    );
+}
+
+.ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+    background-color: #dec07a;
+    z-index: 3;
+    border-top: 5px solid #51683c;
+    background-image: linear-gradient(to bottom, #dec07a, #caa55e);
+    overflow: hidden;
+}
+
+/* Add grass on top of the ground */
+.ground::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: repeating-linear-gradient(
+        90deg,
+        #51683c,
+        #51683c 2px,
+        #6b8c4b 2px,
+        #6b8c4b 4px,
+        #7ba55b 4px,
+        #7ba55b 6px,
+        #8db96b 6px,
+        #8db96b 8px,
+        #7ba55b 8px,
+        #7ba55b 10px,
+        #6b8c4b 10px,
+        #6b8c4b 12px,
+        #51683c 12px,
+        #51683c 14px
+    );
+    z-index: 4;
+}
+
+/* Add texture to the soil */
+.ground::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle, rgba(0,0,0,0.05) 2px, transparent 3px),
+        radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 2px);
+    background-size: 20px 20px, 30px 30px;
+    background-position: 0 0, 10px 10px;
+}
+
+.cloud {
+    position: absolute;
+    background-color: white;
+    border-radius: 50px;
+    opacity: 0.8;
+    z-index: 0; /* Behind the bird and pipes */
+}
+
+.cloud::before,
+.cloud::after {
+    content: '';
+    position: absolute;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.cloud::before {
+    width: 50%;
+    height: 80%;
+    top: -40%;
+    left: 25%;
+}
+
+.cloud::after {
+    width: 70%;
+    height: 100%;
+    top: -50%;
+    right: 10%;
+}
+
+/* Cloud variations */
+.cloud-small {
+    width: 70px;
+    height: 30px;
+}
+
+.cloud-medium {
+    width: 100px;
+    height: 40px;
+}
+
+.cloud-large {
+    width: 130px;
+    height: 50px;
+}
+
+/* Game over/retry screen styles */
+.retry-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    padding: 20px 30px;
+    text-align: center;
+    z-index: 15;
+    width: 80%;
+    max-width: 280px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    border: 2px solid #fff;
+}
+
+.retry-screen h2 {
+    color: #ff4d4d;
+    font-size: 32px;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.retry-screen p {
+    color: white;
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+.retry-screen .score-display {
+    margin: 15px 0;
+    font-size: 24px;
+    color: #ffde59;
+    font-weight: bold;
+}
+
+.retry-button {
+    background: linear-gradient(to bottom, #4CAF50, #45a049);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 15px;
+    border-radius: 50px;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #2e7d32;
+    transition: all 0.2s;
+    width: 80%;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.retry-button:hover {
+    background: linear-gradient(to bottom, #45a049, #3d8b40);
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #2e7d32;
+}
+
+.retry-button:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+/* Sun styling */
+.sun {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, #ffeb3b 20%, #ffc107 60%, #ff9800 100%);
+    border-radius: 50%;
+    top: 40px;
+    right: 40px;
+    z-index: 0; /* Behind the bird and pipes, same as clouds */
+    box-shadow: 0 0 30px rgba(255, 235, 59, 0.8); /* Glow effect */
+}
+
+/* Sun rays */
+.sun::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    background: radial-gradient(
+        circle,
+        rgba(255, 235, 59, 0.3) 0%,
+        rgba(255, 235, 59, 0.2) 50%,
+        rgba(255, 235, 59, 0) 70%
+    );
+    border-radius: 50%;
+    z-index: -1;
+}
+
+/* Optional: Add a pulsing animation to the sun */
+@keyframes sunPulse {
+    0% {
+        box-shadow: 0 0 30px rgba(255, 235, 59, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(255, 235, 59, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 30px rgba(255, 235, 59, 0.6);
+    }
+}
+
+.sun {
+    animation: sunPulse 5s infinite ease-in-out;
+}
+
+/* Background bird styling */
+.bg-bird {
+    position: absolute;
+    width: 30px; /* Smaller than main bird */
+    height: 20px;
+    background-color: #a0a0a0; /* Grey color */
+    border-radius: 50% 50% 30% 30%;
+    z-index: 0; /* Behind pipes/main bird, same layer as clouds/sun */
+    opacity: 0.6;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Simple wing shape for background birds */
+.bg-bird::before {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 8px;
+    background-color: #c0c0c0; /* Lighter grey */
+    border-radius: 50%;
+    top: 5px;
+    left: 5px;
+    transform: rotate(-20deg);
+}
+
+/* Optional: Add a subtle flapping animation */
+@keyframes bgBirdFlap {
+    0%, 100% {
+        transform: translateY(0) rotate(-5deg);
+    }
+    50% {
+        transform: translateY(-2px) rotate(5deg);
+    }
+}
+
+.bg-bird {
+    animation: bgBirdFlap 0.8s infinite ease-in-out;
+} 
